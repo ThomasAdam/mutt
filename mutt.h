@@ -406,6 +406,7 @@ enum
   OPTPOPAUTHTRYALL,
   OPTPOPLAST,
 #endif
+  OPTPOSTPONEENCRYPT,
   OPTPRINTDECODE,
   OPTPRINTSPLIT,
   OPTPROMPTAFTER,
@@ -432,6 +433,7 @@ enum
   OPTTHOROUGHSRC,
   OPTTHREADRECEIVED,
   OPTTILDE,
+  OPTTSENABLED,
   OPTUNCOLLAPSEJUMP,
   OPTUSE8BITMIME,
   OPTUSEDOMAIN,
@@ -459,6 +461,8 @@ enum
   OPTCRYPTAUTOENCRYPT,
   OPTCRYPTAUTOPGP,
   OPTCRYPTAUTOSMIME,
+  OPTCRYPTCONFIRMHOOK,
+  OPTCRYPTOPPORTUNISTICENCRYPT,
   OPTCRYPTREPLYENCRYPT,
   OPTCRYPTREPLYSIGN,
   OPTCRYPTREPLYSIGNENCRYPTED,
@@ -702,8 +706,8 @@ typedef struct mutt_thread THREAD;
 
 typedef struct header
 {
-  unsigned int security : 11;  /* bit 0-6: flags, bit 7,8: application.
-				 see: crypt.h pgplib.h, smime.h */
+  unsigned int security : 12;  /* bit 0-8: flags, bit 9,10: application.
+				 see: mutt_crypt.h pgplib.h, smime.h */
 
   unsigned int mime : 1;    		/* has a MIME-Version header? */
   unsigned int flagged : 1; 		/* marked important? */

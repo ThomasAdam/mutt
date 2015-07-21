@@ -146,7 +146,7 @@ char *mutt_gen_msgid (void);
 char *mutt_get_body_charset (char *, size_t, BODY *);
 const char *mutt_get_name (ADDRESS *);
 char *mutt_get_parameter (const char *, PARAMETER *);
-char *mutt_crypt_hook (ADDRESS *);
+LIST *mutt_crypt_hook (ADDRESS *);
 char *mutt_make_date (char *, size_t);
 
 const char *mutt_make_version (void);
@@ -250,6 +250,7 @@ void mutt_signal_init (void);
 void mutt_stamp_attachment (BODY *a);
 void mutt_tabs_to_spaces (char *);
 void mutt_tag_set_flag (int, int);
+short mutt_ts_capability (void);
 void mutt_unblock_signals (void);
 void mutt_unblock_signals_system (int);
 void mutt_update_encoding (BODY *a);
