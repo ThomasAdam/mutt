@@ -956,8 +956,8 @@ static int smime_handle_cert_email (char *certificate, char *mailbox,
   while ((fgets (email, sizeof (email), fpout)))
   {
     len = mutt_strlen (email);
-    if (len)
-      *(email + len - 1) = '\0';
+    if (len && (email[len - 1] == '\n'))
+      email[len - 1] = '\0';
     if(mutt_strncasecmp (email, mailbox, mutt_strlen (mailbox)) == 0)
       ret=1;
 
@@ -986,8 +986,8 @@ static int smime_handle_cert_email (char *certificate, char *mailbox,
     while ((fgets (email, sizeof (email), fpout)))
     {
       len = mutt_strlen (email);
-      if (len)
-        *(email + len - 1) = '\0';
+      if (len && (email[len - 1] == '\n'))
+        email[len - 1] = '\0';
       (*buffer)[count] = safe_calloc(1, mutt_strlen (email) + 1);
       strncpy((*buffer)[count], email, mutt_strlen (email));
       count++;
@@ -2057,6 +2057,10 @@ int smime_send_menu (HEADER *msg, int *redraw)
   if (option (OPTCRYPTOPPORTUNISTICENCRYPT) && (msg->security & OPPENCRYPT))
   {
     prompt = _("S/MIME (s)ign, encrypt (w)ith, sign (a)s, (c)lear, or (o)ppenc mode off? ");
+    /* L10N: The 'f' is from "forget it", an old undocumented synonym of
+       'clear'.  Please use a corresponding letter in your language.
+       Alternatively, you may duplicate the letter 'c' is translated to.
+       This comment also applies to the two following letter sequences. */
     letters = _("swafco");
     choices = "SwaFCo";
   }

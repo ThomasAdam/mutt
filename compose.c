@@ -754,7 +754,7 @@ int mutt_compose_menu (HEADER *msg,   /* structure for new message */
 	  ctx = mx_open_mailbox (fname, M_READONLY, NULL);
 	  if (ctx == NULL)
 	  {
-	    mutt_perror (fname);
+	    mutt_error (_("Unable to open mailbox %s"), fname);
 	    break;
 	  }
 
@@ -1023,6 +1023,8 @@ int mutt_compose_menu (HEADER *msg,   /* structure for new message */
 	{
 	  if (stat(idx[menu->current]->content->filename, &st) == -1)
 	  {
+            /* L10N:
+               "stat" is a system call. Do "man 2 stat" for more information. */
 	    mutt_error (_("Can't stat %s: %s"), fname, strerror (errno));
 	    break;
 	  }
@@ -1234,14 +1236,20 @@ int mutt_compose_menu (HEADER *msg,   /* structure for new message */
 	if ((WithCrypto & APPLICATION_SMIME)
             && (msg->security & APPLICATION_SMIME))
 	{
-	  if (mutt_yesorno (_("S/MIME already selected. Clear & continue ? "),
-			     M_YES) != M_YES)
-	  {
-	    mutt_clear_error ();
-	    break;
-	  }
+          if (msg->security & (ENCRYPT | SIGN))
+          {
+            if (mutt_yesorno (_("S/MIME already selected. Clear & continue ? "),
+                              M_YES) != M_YES)
+            {
+              mutt_clear_error ();
+              break;
+            }
+            msg->security &= ~(ENCRYPT | SIGN);
+          }
 	  msg->security &= ~APPLICATION_SMIME;
 	  msg->security |= APPLICATION_PGP;
+          crypt_opportunistic_encrypt (msg);
+          redraw_crypt_lines (msg);
 	}
 	msg->security = crypt_pgp_send_menu (msg, &menu->redraw);
 	redraw_crypt_lines (msg);
@@ -1261,14 +1269,20 @@ int mutt_compose_menu (HEADER *msg,   /* structure for new message */
 	if ((WithCrypto & APPLICATION_PGP)
             && (msg->security & APPLICATION_PGP))
 	{
-	  if (mutt_yesorno (_("PGP already selected. Clear & continue ? "),
-			      M_YES) != M_YES)
-	  {
-	     mutt_clear_error ();
-	     break;
-	  }
+          if (msg->security & (ENCRYPT | SIGN))
+          {
+            if (mutt_yesorno (_("PGP already selected. Clear & continue ? "),
+                                M_YES) != M_YES)
+            {
+              mutt_clear_error ();
+              break;
+            }
+            msg->security &= ~(ENCRYPT | SIGN);
+          }
 	  msg->security &= ~APPLICATION_PGP;
 	  msg->security |= APPLICATION_SMIME;
+          crypt_opportunistic_encrypt (msg);
+          redraw_crypt_lines (msg);
 	}
 	msg->security = crypt_smime_send_menu(msg, &menu->redraw);
 	redraw_crypt_lines (msg);

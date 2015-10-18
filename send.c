@@ -398,7 +398,7 @@ static int include_forward (CONTEXT *ctx, HEADER *cur, FILE *out)
 
 void mutt_make_attribution (CONTEXT *ctx, HEADER *cur, FILE *out)
 {
-  char buffer[STRING];
+  char buffer[LONG_STRING];
   if (Attribution)
   {
     mutt_make_string (buffer, sizeof (buffer), Attribution, ctx, cur);
@@ -497,6 +497,9 @@ static int default_to (ADDRESS **to, ENVELOPE *env, int flags, int hmfupto)
        * to send a message to only the sender of the message.  This
        * provides a way to do that.
        */
+      /* L10N:
+         Asks whether the user respects the reply-to header.
+         If she says no, mutt will reply to the from header's address instead. */
       snprintf (prompt, sizeof (prompt), _("Reply to %s%s?"),
 		env->reply_to->mailbox, 
 		env->reply_to->next?",...":"");
