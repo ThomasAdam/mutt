@@ -201,7 +201,7 @@ static int edit_address (ADDRESS **a, /* const */ char *field)
       return (-1);
     rfc822_free_address (a);
     *a = mutt_expand_aliases (mutt_parse_adrlist (NULL, buf));
-    if ((idna_ok = mutt_addrlist_to_idna (*a, &err)) != 0)
+    if ((idna_ok = mutt_addrlist_to_intl (*a, &err)) != 0)
     {
       mutt_error (_("Error: '%s' is a bad IDN."), err);
       mutt_refresh ();
@@ -398,7 +398,7 @@ static int include_forward (CONTEXT *ctx, HEADER *cur, FILE *out)
 
 void mutt_make_attribution (CONTEXT *ctx, HEADER *cur, FILE *out)
 {
-  char buffer[STRING];
+  char buffer[LONG_STRING];
   if (Attribution)
   {
     mutt_make_string (buffer, sizeof (buffer), Attribution, ctx, cur);
@@ -497,6 +497,9 @@ static int default_to (ADDRESS **to, ENVELOPE *env, int flags, int hmfupto)
        * to send a message to only the sender of the message.  This
        * provides a way to do that.
        */
+      /* L10N:
+         Asks whether the user respects the reply-to header.
+         If she says no, mutt will reply to the from header's address instead. */
       snprintf (prompt, sizeof (prompt), _("Reply to %s%s?"),
 		env->reply_to->mailbox, 
 		env->reply_to->next?",...":"");
@@ -1420,7 +1423,7 @@ ci_send_message (int flags,		/* send mode */
       {
 	mutt_env_to_local (msg->env);
 	mutt_edit_headers (Editor, msg->content->filename, msg, fcc, sizeof (fcc));
-	mutt_env_to_idna (msg->env, NULL, NULL);
+	mutt_env_to_intl (msg->env, NULL, NULL);
       }
       else
       {
@@ -1626,7 +1629,7 @@ main_loop:
 
       encode_descriptions (msg->content, 1);
       mutt_prepare_envelope (msg->env, 0);
-      mutt_env_to_idna (msg->env, NULL, NULL);	/* Handle bad IDNAs the next time. */
+      mutt_env_to_intl (msg->env, NULL, NULL);	/* Handle bad IDNAs the next time. */
 
       if (!Postponed || mutt_write_fcc (NONULL (Postponed), msg, (cur && (flags & SENDREPLY)) ? cur->env->message_id : NULL, 1, fcc) < 0)
       {
@@ -1656,7 +1659,7 @@ main_loop:
     }
   }
 
-  if (mutt_env_to_idna (msg->env, &tag, &err))
+  if (mutt_env_to_intl (msg->env, &tag, &err))
   {
     mutt_error (_("Bad IDN in \"%s\": '%s'"), tag, err);
     FREE (&err);

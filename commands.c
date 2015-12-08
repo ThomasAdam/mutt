@@ -228,7 +228,7 @@ int mutt_display_message (HEADER *cur)
       mutt_set_flag (Context, cur, M_READ, 1);
     if (r != -1 && option (OPTPROMPTAFTER))
     {
-      mutt_ungetch (mutt_any_key_to_continue _("Command: "), 0);
+      mutt_unget_event (mutt_any_key_to_continue _("Command: "), 0);
       rc = km_dokey (MENU_PAGER);
     }
     else
@@ -294,7 +294,7 @@ void ci_bounce_message (HEADER *h, int *redraw)
 
   adr = mutt_expand_aliases (adr);
 
-  if (mutt_addrlist_to_idna (adr, &err) < 0)
+  if (mutt_addrlist_to_intl (adr, &err) < 0)
   {
     mutt_error (_("Bad IDN: '%s'"), err);
     FREE (&err);
